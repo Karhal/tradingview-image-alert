@@ -59,11 +59,11 @@ class TaskManager:
         """Process task
             send message first, screenshot when ready
         """
-        try:
-            message = payload.get("message", "")
-            self.send_message(message)
-        except:
-            _LOGGER.error("Error while sending message: %s", json.dumps(payload), exc_info=True)
+        #try:
+        #    message = payload.get("message", "")
+        #    self.send_message(message)
+        #except:
+        #    _LOGGER.error("Error while sending message: %s", json.dumps(payload), exc_info=True)
 
         try:
             message = payload.get("message", "")
@@ -74,6 +74,9 @@ class TaskManager:
 
             image_file_name = self.maybe_save_screenshot(chart_id, exchange, symbol, interval)
             self.send_screenshot(message, image_file_name)
+            # Remove generated images
+            if image_file_name:
+                os.remove(os.path.join(self.image_dir, image_file_name))
         except:
             _LOGGER.error("Error while processing task: %s", json.dumps(payload), exc_info=True)
 
@@ -86,7 +89,7 @@ class TaskManager:
 
         # hide watchlist
         element = WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(
-            (By.XPATH, "//button[@aria-label='Watchlist, details and news']")))
+            (By.XPATH, "/html/body/div[2]/div[6]/div/div[1]/div/div/div/div/button[1]")))
         element.click()
 
         image_file_name = f"{uuid.uuid4().hex}.png"
@@ -116,9 +119,7 @@ class TaskManager:
         if not message or not self.discord_webhook_url:
             return
 
-        payload = {"content": message}
-
-        response = requests.post(self.discord_webhook_url, json=payload)
+        response = requests.post(self.discord_webhook_url, json=message)
         response.raise_for_status()
 
     def send_screenshot(self, message, image_file_name):
@@ -126,8 +127,7 @@ class TaskManager:
         if image_file_name is None or not self.discord_webhook_url:
             return
 
-        payload = {"content": message}
         files = {"screenshot": open(os.path.join(self.image_dir, image_file_name), "rb")}
 
-        response = requests.post(self.discord_webhook_url, data={"payload_json": json.dumps(payload)}, files=files)
+        response = requests.post(self.discord_webhook_url, data={"payload_json": json.dumps(message)}, files=files)
         response.raise_for_status()

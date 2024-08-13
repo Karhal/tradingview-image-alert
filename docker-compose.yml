@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - BASE_URL=${BASE_URL}
+      - IMAGE_DIR=${IMAGE_DIR}
+    volumes:
+      - .:/app
+      - ./images:/app/images
+    depends_on:
+      - selenium
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
+    volumes:
+      - /dev/shm:/dev/shm
