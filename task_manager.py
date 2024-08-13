@@ -59,12 +59,6 @@ class TaskManager:
         """Process task
             send message first, screenshot when ready
         """
-        #try:
-        #    message = payload.get("message", "")
-        #    self.send_message(message)
-        #except:
-        #    _LOGGER.error("Error while sending message: %s", json.dumps(payload), exc_info=True)
-
         try:
             message = payload.get("message", "")
             chart_id = payload.get("chart_id", "")
@@ -87,10 +81,13 @@ class TaskManager:
         url = self.gen_url(chart_id, exchange, symbol, interval)
         self.driver.get(url)
 
-        # hide watchlist
-        element = WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(
-            (By.XPATH, "/html/body/div[2]/div[6]/div/div[1]/div/div/div/div/button[1]")))
-        element.click()
+        try:
+            # hide watchlist
+            element = WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(
+                (By.XPATH, "/html/body/div[2]/div[6]/div/div[1]/div/div/div/div/button[1]")))
+            element.click()
+        except Exception as e:
+            _LOGGER.error("Error while hiding watchlist: %s", str(e))
 
         image_file_name = f"{uuid.uuid4().hex}.png"
         self.driver.save_screenshot(os.path.join(self.image_dir, image_file_name))
