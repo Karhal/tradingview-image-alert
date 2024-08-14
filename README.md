@@ -6,12 +6,14 @@ A simple Flask application that allows you to receive webhook alerts from Tradin
 
 ## Table of Contents
 
-1. [Installation](#installation)
-2. [Configuration](#configuration)
-3. [Usage](#usage)
-4. [File Structure](#file-structure)
-5. [Modifying the Application](#modifying-the-application)
-6. [License](#license)
+- [TradingView Image Alert](#tradingview-image-alert)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Usage](#usage)
+  - [File Structure](#file-structure)
+  - [Modifying the Application](#modifying-the-application)
+  - [License](#license)
 
 ## Installation
 To use this application, you'll need to have Python, Chrome and Chrome Webdriver installed on your server. Here are steps to install chrome and chrome webdriver on Ubuntu Server: https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
@@ -20,7 +22,7 @@ Follow these steps to get started:
 
 1. Clone this repository to your server.
     ```commandline
-    git clone https://github.com/abinthomasonline/tradingview-image-alert.git
+    git clone https://github.com/Karhal/tradingview-image-alert.git
     ```
    
 2. Navigate to the cloned repository and install the required Python packages.
@@ -49,11 +51,15 @@ Webhook URL: `http://<ip_or_domain>/alert`
 The alert message set in TradingView should be in the following format:
 ```json
 {
-    "message": "Alert Message",
-    "chart_id": "oz2zbrTL", 
-    "symbol": "BTCUSDT",
-    "exchange": "BINANCE",
-    "interval": "1"
+  "message": {
+  "avatar_url":"https://cdn3.emoji.gg/emojis/7675-ethereum.png",
+  "username": "{{ticker}}",
+  "content": "🚀 {{ticker}} <Whatever your alert says>. Current price: {{close}}"
+},
+  "chart_id": "<chartId>>",
+  "symbol": "{{ticker}}",
+  "exchange": "{{exchange}}",
+  "interval": "{{interval}}"
 }
 ```
 - `message`: The alert message that will be sent to the Discord channel.
